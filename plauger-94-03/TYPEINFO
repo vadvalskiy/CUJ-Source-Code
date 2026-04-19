@@ -1,0 +1,27 @@
+Listing 5 -- The header <typeinfo>
+
+#ifndef _TYPEINFO_
+#define _TYPEINFO_
+                // class badtypeid
+class badtypeid : public xlogic {
+protected:
+//      virtual void do_raise();
+public:
+        badtypeid();
+        virtual ~badtypeid();
+        };
+                // class typeinfo
+class typeinfo {
+        const char *_Name;
+        const int _Desc;        // implementation dependent
+        typeinfo(const typeinfo&);
+        typeinfo& operator=(const typeinfo&);
+public:
+        virtual ~typeinfo();
+        int operator==(const typeinfo&) const;
+        int operator!=(const typeinfo& _Rop) const
+                {return (!(*this == _Rop)); }
+        int before(const typeinfo&);
+        const char *name() const  {return (_Name); }
+        };
+#endif

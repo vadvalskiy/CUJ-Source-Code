@@ -1,0 +1,27 @@
+--------------- Listing 3: <memory>, part 4 -------------
+
+<f>        // TEMPLATE CLASS raw_storage_iterator
+template<class OutIt, class T>
+    class raw_storage_iterator
+        : public iterator<output_iterator_tag, void, void> {
+public:
+    typedef OutIt iterator_type;
+    typedef T element_type;
+    explicit raw_storage_iterator(OutIt x)
+        : Next(x) {}
+    raw_storage_iterator<OutIt, T>& operator*()
+        {return (*this); }
+    raw_storage_iterator<OutIt, T>& operator=(const T& x)
+        {_Construct(&*Next, x);
+        return (*this); }
+    raw_storage_iterator<OutIt, T>& operator++()
+        {++Next;
+        return (*this); }
+    raw_storage_iterator<OutIt, T> operator++(int)
+        {raw_storage_iterator<OutIt, T> _Ans = *this;
+        ++Next;
+        return (_Ans); }
+private:
+    OutIt Next;
+    };<d>
+

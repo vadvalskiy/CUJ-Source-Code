@@ -1,0 +1,62 @@
+/* _Sinf function */
+#include "xmath.h"
+
+_scos _Sinf(double x)
+{
+/* compute sinf(x) tanf(x) cosf(x) */
+  double xr, den, num2, den2, x2, gr;
+  _scos res;
+
+  /* Reduce to -PI < x < PI */
+#define PI2 M_1_PI*M_1_PI
+#define PI3 PI2*M_1_PI
+#define PI4 PI3*M_1_PI
+#define PI5 PI4*M_1_PI
+  xr = .5 * M_1_PI * x;
+  gr = 1 / DBL_EPSILON;
+  if (FLT_ROUNDS > 0) {
+	/* Compiler should eliminate dead code if FLT_ROUNDS is
+	 * compile time constant */
+	if (x < 0) gr = -gr;
+	if (FLT_ROUNDS == 1)	/* IEEE std case */
+		gr = (xr + gr) - gr;	/* ANINT(x/2/pi) */
+	else			/* FLT_ROUNDS 2 or 3 */
+		gr = ((xr + (FLT_ROUNDS == 2 ?
+			     -.5 : .5)) + gr) - gr;
+  } else
+	/* Assume FLT_ROUNDS ==0 for positive numbers */
+	gr = x < 0 ?
+		gr - ((.5 - xr) + gr) : ((xr + .5) + gr) - gr;
+
+  xr -= gr;			/* subtract nearest multiple of 2PI */
+  /* Range +-2PI reduced to +- .5 */
+  x2 = xr * xr;
+  /* Rational approx for tan(x/2) = xr/den */
+  xr *= 886.77347 * PI4 + x2 * (-99.398953 * PI2 + x2);
+  den = 886.77345 * PI5 + x2 *
+ 	 (-394.98971 * PI3 + 14.425694 * M_1_PI * x2);
+  den2 = den * den;
+  num2 = xr * xr;
+
+  /* Cos(x) = (1-tan(x/2)^2)/(1+tan(x/2)^2 */
+  /* Sin(x) = 2*tan(x/2)/(1+tan(x/2)^2) */
+  /* Tan(x) = 2*tan(x/2)/(1-tan(x/2)^2) */
+
+  res.c = (den2 - num2) / (den2 + num2);	/* cos */
+  res.s = xr * (den + den) / (den2 + num2);	/* sin */
+  res.t = xr * (den + den) / (den2 - num2);	/* tan */
+  return res;
+}
+
+float (cosf) (float x) {
+  return _Sinf(x).c;
+}
+
+float (sinf) (float x) {
+  return _Sinf(x).s;
+}
+
+float (tanf) (float x) {
+  return _Sinf(x).t;
+}
+

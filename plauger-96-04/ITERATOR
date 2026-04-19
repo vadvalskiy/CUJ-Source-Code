@@ -1,0 +1,16 @@
+// iterator standard header
+#ifndef _ITERATOR_
+#define _ITERATOR_
+#include <utility>
+namespace std {
+
+		// BASIC ITERATORS
+template<class T, class Dist = ptrdiff_t>
+	struct input_iterator {};
+struct output_iterator {};
+template<class T, class Dist = ptrdiff_t>
+	struct forward_iterator {};
+template<class T, class Dist = ptrdiff_t>
+	struct bidirectional_iterator {};
+template<class T, class Dist = ptrdiff_t>
+	struct random_access_iterator {};

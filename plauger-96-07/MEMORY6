@@ -1,0 +1,37 @@
+--------------- Listing 5: <memory>, part 6 -------------
+
+        // TEMPLATE CLASS auto_ptr
+template<class T>
+    class auto_ptr {
+public:
+    typedef T element_type;
+    explicit auto_ptr(T *p= 0)
+        : Owns(p != 0), Ptr(p) {}
+///    template<class U>
+    typedef T U;    ///
+    auto_ptr(const auto_ptr<U>& y)
+        : Owns(y.Owns), Ptr((T *)y.release()) {}
+///    template<class U>
+    auto_ptr<T>& operator=(auto_ptr<U>& y)
+        {if ((void *)this != (void *)&y)
+            {if (Owns)
+                delete Ptr;
+            Owns = y.Owns;
+            Ptr = (T *)y.release(); }
+        return (*this); }
+    ~auto_ptr()
+        {if (Owns)
+            delete Ptr; }
+    T& operator*() const
+        {return (*get()); }
+    T *operator->() const
+        {return (get()); }
+    T *get() const
+        {return (Ptr); }
+    T *release() const
+        {((auto_ptr<T> *)this)->Owns = false;
+        return (Ptr); }
+private:
+    bool Owns;
+    T *Ptr;
+    };

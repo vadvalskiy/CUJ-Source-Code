@@ -1,0 +1,15 @@
+                  vector   deque     list      set/map
+
+insert/erase        N        N      constant    log N
+
+ prepend           (N)    constant  constant   (log N)
+
+find(val)          (N)      (N)       (N)       log N
+
+  X[N]          constant  constant    (N)        (N)
+
+ pointers           0        1         2          3
+
+
+NOTES: (N) or (log N) -- time complexity for operations
+not directly supported by member functions

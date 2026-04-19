@@ -1,0 +1,37 @@
+                // STRUCT money_base
+struct money_base : public locale::facet {
+        enum part {symbol = '$', sign = '+', space = ' ',
+                value = 'v', none = 'x'};
+        struct pattern {
+                char field[4];
+                };
+        money_base(size_t refs = 0);
+        };
+
+template<class E, class Intl>
+        class moneypunct : public money_base {
+public:
+        typedef E char_type;
+        typedef basic_string<E, char_traits<E>, allocator<E> >
+                string_type;
+        E decimal_point() const;
+        E thousands_sep() const;
+        string grouping() const;
+        string_type curr_symbol() const;
+        string_type positive_sign() const;
+        string_type negative_sign() const;
+        int frac_digits() const;
+        pattern pos_format() const;
+        pattern neg_format() const;
+        explicit money_punct(size_t refs, bool intl);
+protected:
+        virtual E do_decimal_point() const;
+        virtual E do_thousands_sep() const;
+        virtual string do_grouping() const;
+        virtual string_type do_curr_symbol() const;
+        virtual string_type do_positive_sign() const;
+        virtual string_type do_negative_sign() const;
+        virtual int do_frac_digits() const;
+        virtual pattern do_pos_format() const;
+        virtual pattern do_neg_format() const;
+        };

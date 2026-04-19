@@ -1,0 +1,30 @@
+typedef T fenv_t;
+typedef T fexcept_t;
+
+#define FE_INEXACT		val
+#define FE_DIVBYZERO	val
+#define FE_UNDERDFLOW	val
+#define FE_OVERFLOW		val
+#define FE_INVALID		val
+#define FE_ALL_EXCEPT	val
+
+#define FE_TONEAREST	val
+#define FE_UPWARD		val
+#define FE_DOWNWARD		val
+#define FE_TOWARDZERO	val
+
+#define FE_DFL_ENV		ptr
+
+void feclearexcept(int excepts);
+void fegetexcept(fexcept_t *flagp, int excepts);
+void feraiseexcept(int excepts);
+void fesetexcept(const fexcept_t *flagp, int excepts);
+int fetestexcept(int excepts);
+int fegetround(void);
+int fesetround(int round);
+void fegetenv(fenv_t *envp);
+int feholdexcept(fenv_t *envp);
+void fesetenv(const fenv_t *envp);
+void feupdateenv(const fenv_t *envp);
+
+

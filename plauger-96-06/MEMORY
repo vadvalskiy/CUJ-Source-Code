@@ -1,0 +1,105 @@
+--------------- Listing 1: <memory>, part 1 -------------
+
+<f>// memory standard header
+#ifndef _MEMORY_
+#define _MEMORY_
+#include <cstdlib>
+#include <iterator>
+#include <new>
+#include <utility>
+///namespace std {
+
+#ifndef _FARQ    /* specify standard memory model */
+ #define _FARQ
+ #define _PDFT    ptrdiff_t
+ #define _SIZT    size_t
+#endif
+
+        // TEMPLATE FUNCTION _Allocate
+template<class T> inline
+    T _FARQ *_Allocate(_PDFT n, T _FARQ *)
+    {if (n < 0)
+        n = 0;
+    return ((T _FARQ *)operator new((_SIZT)n * sizeof (T))); }
+
+        // TEMPLATE FUNCTION _Construct
+template<class T1, class T2> inline
+    void _Construct(T1 _FARQ *p, const T2& val)
+    {new ((void _FARQ *)p) T1(val); }
+
+        // TEMPLATE FUNCTION _Destroy
+template<class T> inline
+    void _Destroy(T _FARQ *p)
+///    {p->~T(); }
+    {p->T::~T(); }    ///
+
+inline void _Destroy(char _FARQ *_P)
+    {}
+inline void _Destroy(wchar_t _FARQ *_P)
+    {}
+
+        // (TEMPLATE) CLASS allocator
+template<class T>
+    class allocator {
+public:
+    typedef _SIZT size_type;
+    typedef _PDFT difference_type;
+    typedef T _FARQ *pointer;
+    typedef const T _FARQ *const_pointer;
+    typedef T _FARQ& reference;
+    typedef const T _FARQ& const_reference;
+    typedef T value_type;
+    pointer address(reference x) const
+        {return (&x); }
+    const_pointer address(const_reference x) const
+        {return (&x); }
+///    template<class U>
+///        struct rebind {
+///            typedef allocator<U> other;
+///            };
+///    allocator()
+///        {}
+///    template<class _U>
+///        allocator(const allocator<_U>&)
+///        {}
+///    template<class _U>
+///        allocator<_T>& operator=(const allocator<_U>&)
+///        {}
+    pointer allocate(size_type n, const void *)    ///
+        {return (_Allocate((difference_type)n,    ///
+            (pointer)0)); }    ///
+    char _FARQ *Charalloc(size_type _N)    ///
+        {return (_Allocate((difference_type)_N,    ///
+            (char _FARQ *)0)); }    ///
+    void deallocate(void _FARQ *p)
+        {operator delete(p); }
+    void construct(pointer p, const T& val)
+        {_Construct(p, val); }
+    void destroy(pointer p)
+        {_Destroy(p); }
+    _SIZT max_size() const
+        {_SIZT n = (_SIZT)(-1) / sizeof (T);
+        return (0 < n ? n : 1); }
+    };
+
+        // CLASS allocator<void>
+class allocator<void> {
+public:
+    typedef void T;
+    typedef T _FARQ *pointer;
+    typedef const T _FARQ *const_pointer;
+    typedef T value_type;
+///    template<class U>
+///        struct rebind {
+///            typedef allocator<U> other;
+///            };
+    };
+
+        // OPERATORS FOR allocator
+template<class T, class U>
+    bool operator==(const allocator<T>&, const allocator<U>&)
+    {return (true); }
+///template<class _T, class _U>
+///    bool operator!=(const allocator<T>&, const allocator<U>&)
+///       {return (false); }<d>
+

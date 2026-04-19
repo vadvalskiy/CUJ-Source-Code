@@ -1,0 +1,13 @@
+#include <wchar.h>
+
+static wchar_t hirigana = wctype("hirigana");
+
+int ishiri(wchar_t *wcs)
+	{	/* test each element of string */
+	while (*wcs)
+		if (!iswctype(*wcs++, hirigana))
+			return (0);
+	return (1);
+	}
+
+

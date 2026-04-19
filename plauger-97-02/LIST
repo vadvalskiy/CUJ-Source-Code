@@ -1,0 +1,449 @@
+[Caption: Listing 1 -- Template class vector]
+
+        // TEMPLATE CLASS list
+///template<class Ty, class A = allocator<Ty> >
+template<class Ty, class A>    ///
+    class list {
+protected:
+///    typedef A::rebind<void>::other::pointer Genptr;
+    typedef void *Genptr;    ///
+    struct Node;
+    friend struct Node;
+    struct Node {
+        Genptr Next, Prev;
+        Ty Value;
+        };
+///    typedef A::rebind<Node>::other::pointer Nodeptr;
+    typedef Node *Nodeptr;    ///
+    struct Acc;
+    friend struct Acc;
+    struct Acc {
+///        typedef A::rebind<Nodeptr>::other::reference Nodepref;
+        typedef Nodeptr& Nodepref;    ///
+        typedef A::reference Vref;
+        static Nodepref Next(Nodeptr P)
+            {return ((Nodepref)(*P).Next); }
+        static Nodepref Prev(Nodeptr P)
+            {return ((Nodepref)(*P).Prev); }
+        static Vref Value(Nodeptr P)
+            {return ((Vref)(*P).Value); }
+        };
+public:
+    typedef list<Ty, A> Myt;
+    typedef A allocator_type;
+    typedef A::size_type size_type;
+    typedef A::difference_type difference_type;
+    typedef A::pointer Tptr;
+    typedef A::const_pointer Ctptr;
+    typedef A::reference reference;
+    typedef A::const_reference const_reference;
+    typedef A::value_type value_type;
+        // CLASS iterator
+    class iterator;
+    friend class iterator;
+    class iterator : public Bidit<Ty, difference_type> {
+    public:
+        iterator()
+            {}
+        iterator(Nodeptr P)
+            : Ptr(P) {}
+        reference operator*() const
+            {return (Acc::Value(Ptr)); }
+///        Tptr operator->() const
+///            {return (&**this); }
+        iterator& operator++()
+            {Ptr = Acc::Next(Ptr);
+            return (*this); }
+        iterator operator++(int)
+            {iterator Tmp = *this;
+            ++*this;
+            return (Tmp); }
+        iterator& operator--()
+            {Ptr = Acc::Prev(Ptr);
+            return (*this); }
+        iterator operator--(int)
+            {iterator Tmp = *this;
+            --*this;
+            return (Tmp); }
+        bool operator==(const iterator& X) const
+            {return (Ptr == X.Ptr); }
+        bool operator!=(const iterator& X) const
+            {return (!(*this == X)); }
+        Nodeptr Mynode() const
+            {return (Ptr); }
+    protected:
+        Nodeptr Ptr;
+        };
+        // CLASS const_iterator
+    class const_iterator;
+    friend class const_iterator;
+    class const_iterator : public iterator {
+    public:
+        const_iterator()
+            {}
+        const_iterator(Nodeptr P)
+            : iterator(P) {}
+        const_iterator(const iterator& X)
+            : iterator(X) {}
+        const_reference operator*() const
+            {return (Acc::Value(Ptr)); }
+///        Ctptr operator->() const
+///            {return (&**this); }
+        const_iterator& operator++()
+            {Ptr = Acc::Next(Ptr);
+            return (*this); }
+        const_iterator operator++(int)
+            {iterator Tmp = *this;
+            ++*this;
+            return (Tmp); }
+        const_iterator& operator--()
+            {Ptr = Acc::Prev(Ptr);
+            return (*this); }
+        const_iterator operator--(int)
+            {iterator Tmp = *this;
+            --*this;
+            return (Tmp); }
+        bool operator==(const const_iterator& X) const
+            {return (Ptr == X.Ptr); }
+        bool operator!=(const const_iterator& X) const
+            {return (!(*this == X)); }
+        };
+    typedef reverse_bidirectional_iterator<iterator,
+        value_type, reference, Tptr, difference_type>
+            reverse_iterator;
+    typedef reverse_bidirectional_iterator<const_iterator,
+        value_type, const_reference, Ctptr, difference_type>
+            const_reverse_iterator;
+    explicit list(const A& Al = A())
+        : allocator(Al),
+///        Myal(Al), Myalp(Al),
+        Head(Buynode()), Size(0) {}
+    explicit list(size_type N, const Ty& V = Ty(),
+        const A& Al = A())
+        : allocator(Al),
+///        Myal(Al), Myalp(Al),
+        Head(Buynode()), Size(0)
+        {insert(begin(), N, V); }
+    list(const Myt& X)
+        : allocator(X.allocator),
+///        Myal(X.allocator), Myalp(X.allocator),
+        Head(Buynode()), Size(0)
+        {insert(begin(), X.begin(), X.end()); }
+///    template<class It>
+    typedef const_iterator It;    ///
+    list(It F, It L, const A& Al = A())
+        : allocator(Al),
+///        Myal(Al), Myalp(Al),
+        Head(Buynode()), Size(0)
+        {insert(begin(), F, L); }
+    ~list()
+        {erase(begin(), end());
+        Freenode(Head);
+        Head = 0, Size = 0; }
+    Myt& operator=(const Myt& X)
+        {if (this != &X)
+            {iterator F1 = begin();
+            iterator L1 = end();
+            const_iterator F2 = X.begin();
+            const_iterator L2 = X.end();
+            for (; F1 != L1 && F2 != L2; ++F1, ++F2)
+                *F1 = *F2;
+            erase(F1, L1);
+            insert(L1, F2, L2); }
+        return (*this); }
+    iterator begin()
+        {return (iterator(Acc::Next(Head))); }
+    const_iterator begin() const
+        {return (const_iterator(Acc::Next(Head))); }
+    iterator end()
+        {return (iterator(Head)); }
+    const_iterator end() const
+        {return (const_iterator(Head)); }
+    reverse_iterator rbegin()
+        {return (reverse_iterator(end())); }
+    const_reverse_iterator rbegin() const
+        {return (const_reverse_iterator(end())); }
+    reverse_iterator rend()
+        {return (reverse_iterator(begin())); }
+    const_reverse_iterator rend() const
+        {return (const_reverse_iterator(begin())); }
+    void resize(size_type N, Ty X = Ty())
+        {if (size() < N)
+            insert(end(), N - size(), X);
+        else
+            while (N < size())
+                popback(); }
+    size_type size() const
+        {return (Size); }
+    size_type maxsize() const
+        {return (allocator.maxsize()); }
+    bool empty() const
+        {return (size() == 0); }
+    A getallocator() const
+        {return (allocator); }
+    reference front()
+        {return (*begin()); }
+    const_reference front() const
+        {return (*begin()); }
+    reference back()
+        {return (*(--end())); }
+    const_reference back() const
+        {return (*(--end())); }
+    void pushfront(const Ty& X)
+        {insert(begin(), X); }
+    void popfront()
+        {erase(begin()); }
+    void pushback(const Ty& X)
+        {insert(end(), X); }
+    void popback()
+        {erase(--end()); }
+///    template<class It>
+    void assign(It F, It L)
+        {erase(begin(), end());
+        insert(begin(), F, L); }
+///    template<class Pd, class U>
+///        void assign(Pd N, const U& X = U())
+    void assign(size_type N, const Ty& X = Ty())    ///
+        {erase(begin(), end());
+        insert(begin(), N, X); }
+    iterator insert(iterator P, const Ty& X = Ty())
+        {Nodeptr S = P.Mynode();
+        Acc::Prev(S) = Buynode(S, Acc::Prev(S));
+        S = Acc::Prev(S);
+        Acc::Next(Acc::Prev(S)) = S;
+        allocator.construct(&Acc::Value(S), X);
+        ++Size;
+        return (iterator(S)); }
+    void insert(iterator P, size_type M, const Ty& X)
+        {for (; 0 < M; --M)
+            insert(P, X); }
+    void insert(iterator P, const Ty *F, const Ty *L)    ///
+        {for (; F != L; ++F)    ///
+            insert(P, *F); }    ///
+///    template<class It>
+    void insert(iterator P, It F, It L)
+        {for (; F != L; ++F)
+            insert(P, *F); }
+    iterator erase(iterator P)
+        {Nodeptr S = (P++).Mynode();
+        Acc::Next(Acc::Prev(S)) = Acc::Next(S);
+        Acc::Prev(Acc::Next(S)) = Acc::Prev(S);
+        allocator.destroy(&Acc::Value(S));
+        Freenode(S);
+        --Size;
+        return (P); }
+    iterator erase(iterator F, iterator L)
+        {while (F != L)
+            erase(F++);
+        return (F); }
+    void clear()
+        {erase(begin(), end()); }
+    void swap(Myt& X)
+        {if (allocator == X.allocator)
+            {STD swap(Head, X.Head);
+            STD swap(Size, X.Size); }
+        else
+            {iterator P = begin();
+            splice(P, X);
+            X.splice(X.begin(), *this, P, end()); }}
+    friend void swap(Myt& X, Myt& Y)
+        {X.swap(Y); }
+    void splice(iterator P, Myt& X)
+        {if (!X.empty())
+            {Splice(P, X, X.begin(), X.end());
+            Size += X.Size;
+            X.Size = 0; }}
+    void splice(iterator P, Myt& X, iterator F)
+        {iterator L = F;
+        if (P != F && P != ++L)
+            {Splice(P, X, F, L);
+            ++Size;
+            --X.Size; }}
+    void splice(iterator P, Myt& X, iterator F, iterator L)
+        {if (F != L)
+            {if (&X != this)
+                {difference_type N = 0;
+                Distance(F, L, N);
+                Size += N;
+                X.Size -= N; }
+            Splice(P, X, F, L); }}
+    void remove(const Ty& V)
+        {iterator L = end();
+        for (iterator F = begin(); F != L; )
+            if (*F == V)
+                erase(F++);
+            else
+                ++F; }
+///    template<class Pr1>
+    typedef binder2nd<notequalto<Ty> > Pr1;    ///
+    void removeif(Pr1 Pr)
+        {iterator L = end();
+        for (iterator F = begin(); F != L; )
+            if (Pr(*F))
+                erase(F++);
+            else
+                ++F; }
+    void unique()
+        {iterator F = begin(), L = end();
+        if (F != L)
+            for (iterator M = F; ++M != L; M = F)
+                if (*F == *M)
+                    erase(M);
+                else
+                    F = M; }
+///    template<class Pr2>
+    typedef notequalto<Ty> Pr2;    ///
+    void unique(Pr2 Pr)
+        {iterator F = begin(), L = end();
+        if (F != L)
+            for (iterator M = F; ++M != L; M = F)
+                if (Pr(*F, *M))
+                    erase(M);
+                else
+                    F = M; }
+    void merge(Myt& X)
+        {if (&X != this)
+            {iterator F1 = begin(), L1 = end();
+            iterator F2 = X.begin(), L2 = X.end();
+            while (F1 != L1 && F2 != L2)
+                if (*F2 < *F1)
+                    {iterator Mid2 = F2;
+                    Splice(F1, X, F2, ++Mid2);
+                    F2 = Mid2; }
+                else
+                    ++F1;
+            if (F2 != L2)
+                Splice(L1, X, F2, L2);
+            Size += X.Size;
+            X.Size = 0; }}
+///    template<class Pr3>
+    typedef greater<Ty> Pr3;    ///
+    void merge(Myt& X, Pr3 Pr)
+        {if (&X != this)
+            {iterator F1 = begin(), L1 = end();
+            iterator F2 = X.begin(), L2 = X.end();
+            while (F1 != L1 && F2 != L2)
+                if (Pr(*F2, *F1))
+                    {iterator Mid2 = F2;
+                    Splice(F1, X, F2, ++Mid2);
+                    F2 = Mid2; }
+                else
+                    ++F1;
+            if (F2 != L2)
+                Splice(L1, X, F2, L2);
+            Size += X.Size;
+            X.Size = 0; }}
+    void sort()
+        {if (2 <= size())
+            {const sizet MAXN = 15;
+            Myt X(allocator), A[MAXN + 1];
+            sizet N = 0;
+            while (!empty())
+                {X.splice(X.begin(), *this, begin());
+                sizet I;
+                for (I = 0; I < N && !A[I].empty(); ++I)
+                    {A[I].merge(X);
+                    A[I].swap(X); }
+                if (I == MAXN)
+                    A[I].merge(X);
+                else
+                    {A[I].swap(X);
+                    if (I == N)
+                        ++N; }}
+            while (0 < N)
+                merge(A[--N]); }}
+///    template<class Pr3>
+    void sort(Pr3 Pr)
+        {if (2 <= size())
+            {const sizet MAXN = 15;
+            Myt X(allocator), A[MAXN + 1];
+            sizet N = 0;
+            while (!empty())
+                {X.splice(X.begin(), *this, begin());
+                sizet I;
+                for (I = 0; I < N && !A[I].empty(); ++I)
+                    {A[I].merge(X, Pr);
+                    A[I].swap(X); }
+                if (I == MAXN)
+                    A[I].merge(X, Pr);
+                else
+                    {A[I].swap(X);
+                    if (I == N)
+                        ++N; }}
+            while (0 < N)
+                merge(A[--N], Pr); }}
+    void reverse()
+        {if (2 <= size())
+            {iterator L = end();
+            for (iterator F = ++begin(); F != L; )
+                {iterator M = F;
+                Splice(begin(), *this, M, ++F); }}}
+protected:
+    Nodeptr Buynode(Nodeptr Narg = 0, Nodeptr Parg = 0)
+///        {Nodeptr S = Myal.allocate(1, (void *)0);
+///        Myalp.construct(&Acc::Next(s),
+///            Narg != 0 ? Narg : S);
+///        Myalp.construct(&Acc::Prev(s),
+///            Parg != 0 ? Parg : S);
+        {Nodeptr S = (Nodeptr)allocator.Charalloc(    ///
+            1 * sizeof (Node));    ///
+        Acc::Next(S) = Narg != 0 ? Narg : S;    ///
+        Acc::Prev(S) = Parg != 0 ? Parg : S;    ///
+        return (S); }
+    void Freenode(Nodeptr S)
+///        {Myalp.destroy(&Acc::Next(s));
+///        Myalp.destroy(&Acc::Prev(s));
+///        Myal.deallocate(s, 1); }
+        {allocator.deallocate(S, 1); }    ///
+    void Splice(iterator P, Myt& X, iterator F, iterator L)
+        {if (allocator == X.allocator)
+            {Acc::Next(Acc::Prev(L.Mynode())) =
+                P.Mynode();
+            Acc::Next(Acc::Prev(F.Mynode())) =
+                L.Mynode();
+            Acc::Next(Acc::Prev(P.Mynode())) =
+                F.Mynode();
+            Nodeptr S = Acc::Prev(P.Mynode());
+            Acc::Prev(P.Mynode()) =
+                Acc::Prev(L.Mynode());
+            Acc::Prev(L.Mynode()) =
+                Acc::Prev(F.Mynode());
+            Acc::Prev(F.Mynode()) = S; }
+        else
+            {insert(P, F, L);
+            X.erase(F, L); }}
+    void Xran() const
+        {throw outofrange("invalid list<T> subscript"); }
+///    A::rebind<Node>::other Myal;
+///    A::rebind<Nodeptr>::other Myalp;
+    A allocator;
+    Nodeptr Head;
+    size_type Size;
+    };
+        // list TEMPLATE OPERATORS
+template<class Ty, class A> inline
+    bool operator==(const list<Ty, A>& X,
+        const list<Ty, A>& Y)
+    {return (X.size() == Y.size()
+        && equal(X.begin(), X.end(), Y.begin())); }
+template<class Ty, class A> inline
+    bool operator!=(const list<Ty, A>& X,
+        const list<Ty, A>& Y)
+    {return (!(X == Y)); }
+template<class Ty, class A> inline
+    bool operator<(const list<Ty, A>& X,
+        const list<Ty, A>& Y)
+    {return (lexicographicalcompare(X.begin(), X.end(),
+        Y.begin(), Y.end())); }
+template<class Ty, class A> inline
+    bool operator>(const list<Ty, A>& X,
+        const list<Ty, A>& Y)
+    {return (Y < X); }
+template<class Ty, class A> inline
+    bool operator<=(const list<Ty, A>& X,
+        const list<Ty, A>& Y)
+    {return (!(Y < X)); }
+template<class Ty, class A> inline
+    bool operator>=(const list<Ty, A>& X,
+        const list<Ty, A>& Y)
+    {return (!(X < Y)); }

@@ -1,0 +1,62 @@
+--------------- Listing 4: <memory>, part 5 -------------
+
+        // TEMPLATE CLASS _Temp_iterator
+template<class T>
+    class _Temp_iterator
+        : public iterator<output_iterator_tag, void, void> {
+    typedef T _FARQ *Pty;
+public:
+    _Temp_iterator(_PDFT n = 0)
+        {const pair<Pty, _PDFT> pnpair =
+///            get_temporary_buffer<T>(n);
+            get_temporary_buffer(n, (Pty)0);    ///
+        Buf.Begin = pnpair.first;
+        Buf.Cur = pnpair.first;
+        Buf.Hiwater = pnpair.first;
+        Buf.Len = pnpair.second;
+        Pb = &Buf; }
+    _Temp_iterator(const _Temp_iterator<T>& x)
+        {Buf.Begin = 0;
+        Buf.Cur = 0;
+        Buf.Hiwater = 0;
+        Buf.Len = 0;
+        *this = x; }
+    ~_Temp_iterator()
+        {if (Buf.Begin != 0)
+            {for (Pty first = Buf.Begin;
+                first != Buf.Hiwater; ++first)
+                _Destroy(&*first);
+            return_temporary_buffer(Buf.Begin); }}
+    _Temp_iterator<T>& operator=(const _Temp_iterator<T>& x)
+        {Pb = x.Pb;
+        return (*this); }
+    _Temp_iterator<T>& operator=(const T& val)
+        {if (Pb->Cur < Pb->Hiwater)
+            *Pb->Cur++ = val;
+        else
+            {_Construct(&*Pb->Cur, val);
+            Pb->Hiwater = ++Pb->Cur; }
+        return (*this); }
+    _Temp_iterator<T>& operator*()
+        {return (*this); }
+    _Temp_iterator<T>& operator++()
+        {return (*this); }
+    _Temp_iterator<T>& operator++(int)
+        {return (*this); }
+    _Temp_iterator<T>& Init()
+        {Pb->Cur = Pb->Begin;
+        return (*this); }
+    Pty First() const
+        {return (Pb->Begin); }
+    Pty Last() const
+        {return (Pb->Cur); }
+    _PDFT Maxlen() const
+        {return (Pb->Len); }
+private:
+    struct Bufpar {
+        Pty Begin;
+        Pty Cur;
+        Pty Hiwater;
+        _PDFT Len;
+        } Buf, *Pb;
+    };

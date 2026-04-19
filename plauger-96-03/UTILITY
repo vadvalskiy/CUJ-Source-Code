@@ -1,0 +1,55 @@
+--------------- Listing 1: The Header <f><utility><d> --------------
+
+// utility standard header
+#ifndef _UTILITY_
+#define _UTILITY_
+#include <iosfwd>
+///namespace std {
+
+		// TEMPLATE STRUCT pair
+template<class T1, class T2> struct pair {
+	pair()
+		: first(T1()), second(T2()) {}
+	pair(const T1& val1, const T2& val2)
+		: first(val1), second(val2) {}
+	T1 first;
+	T2 second;
+	};
+
+		// TEMPLATE FUNCTION make_pair
+template<class T1, class T2> inline
+	pair<T1, T2> make_pair(const T1& x, const T2& y)
+	{return (pair<T1, T2>(x, y)); }
+
+		// pair TEMPLATE OPERATORS
+template<class T1, class T2> inline
+	bool operator==(const pair<T1, T2>& x,
+		const pair<T1, T2>& y)
+	{return (x.first == y.first && x.second == y.second); }
+
+template<class T1, class T2> inline
+	bool operator<(const pair<T1, T2>& x,
+		const pair<T1, T2>& y)
+	{return (x.first < y.first ||
+		!(y.first < x.first) && x.second < y.second); }
+
+		// TEMPLATE OPERATORS
+template<class T> inline
+	bool operator!=(const T& x, const T& y)
+	{return (!(x == y)); }
+
+template<class T> inline
+	bool operator>(const T& x, const T& y)
+	{return (y < x); }
+
+template<class T> inline
+	bool operator<=(const T& x, const T& y)
+	{return (!(y < x)); }
+
+template<class T> inline
+	bool operator>=(const T& x, const T& y)
+	{return (!(x < y)); }
+
+///};	// end of namespace std
+#endif /* _UTILITY_ */
+

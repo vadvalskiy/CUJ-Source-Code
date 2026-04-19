@@ -1,0 +1,168 @@
+[Caption: Listing 2 -- Template class <f>map<d>]
+
+  // TEMPLATE CLASS map
+template<class K, class Ty, class Pr = less<K>,
+ class A = allocator<Ty> >
+ class map {
+public:
+ typedef map<K, Ty, Pr, A> Myt;
+ typedef pair<const K, Ty> value_type;
+ struct Kfn : public unary_function<value_type, K> {
+  const K& operator()(const value_type& X) const
+  {return (X.first); }
+  };
+ class value_compare
+  : public binary_function<value_type, value_type, bool> {
+  friend class map<K, Ty, Pr, A>;
+ public:
+  bool operator()(const value_type& X,
+   const value_type& Y) const
+   {return (comp(X.first, Y.first)); }
+ protected:
+  value_compare(Pr Pred)
+   : comp(Pred) {}
+  Pr comp;
+  };
+ typedef K key_type;
+ typedef Ty referent_type;
+ typedef Pr key_compare;
+ typedef A allocator_type;
+ typedef typename A::reference Tref;
+/// typedef Tree<K, value_type, Kfn, Pr,
+///  A::rebind<value_type>::other> Imp;
+ typedef Tree<K, value_type, Kfn, Pr, A> Imp; ///
+ typedef typename Imp::size_type size_type;
+ typedef typename Imp::difference_type difference_type;
+ typedef typename Imp::reference reference;
+ typedef typename Imp::const_reference const_reference;
+ typedef typename Imp::iterator iterator;
+ typedef typename Imp::const_iterator const_iterator;
+ typedef typename Imp::reverse_iterator reverse_iterator;
+ typedef typename Imp::const_reverse_iterator
+  const_reverse_iterator;
+ typedef pair<iterator, bool> Pairib;
+ typedef pair<iterator, iterator> Pairii;
+ typedef pair<const_iterator, const_iterator> Paircc;
+ explicit map()
+  : Tr(Pr(), false, A()) {}
+ explicit map(const Pr& Pred)
+  : Tr(Pred, false, A()) {}
+ explicit map(const Pr& Pred, const A& Al)
+  : Tr(Pred, false, Al) {}
+/// template<class It>
+ typedef const value_type *It; ///
+ map(It F, It L)
+  : Tr(Pr(), false, A())
+  {for (; F != L; ++F)
+   Tr.insert(*F); }
+/// template<class It>
+ map(It F, It L, const Pr& Pred)
+  : Tr(Pred, false, A())
+  {for (; F != L; ++F)
+   Tr.insert(*F); }
+/// template<class It>
+ map(It F, It L, const Pr& Pred, const A& Al)
+  : Tr(Pred, false, Al)
+  {for (; F != L; ++F)
+   Tr.insert(*F); }
+ iterator begin()
+  {return (Tr.begin()); }
+ const_iterator begin() const
+  {return (Tr.begin()); }
+ iterator end()
+  {return (Tr.end()); }
+ const_iterator end() const
+  {return (Tr.end()); }
+ reverse_iterator rbegin()
+  {return (Tr.rbegin()); }
+ const_reverse_iterator rbegin() const
+  {return (Tr.rbegin()); }
+ reverse_iterator rend()
+  {return (Tr.rend()); }
+ const_reverse_iterator rend() const
+  {return (Tr.rend()); }
+ size_type size() const
+  {return (Tr.size()); }
+ size_type max_size() const
+  {return (Tr.max_size()); }
+ bool empty() const
+  {return (Tr.empty()); }
+ A get_allocator() const
+  {return (Tr.get_allocator()); }
+ Tref operator[](const key_type& Kv)
+  {iterator P = insert(value_type(Kv, Ty())).first;
+  return ((*P).second); }
+ Pairib insert(const value_type& X)
+  {Imp::Pairib Ans = Tr.insert(X);
+  return (Pairib(Ans.first, Ans.second)); }
+ iterator insert(iterator P, const value_type& X)
+  {return (Tr.insert((Imp::iterator&)P, X)); }
+/// template<class It>
+ void insert(It F, It L)
+  {for (; F != L; ++F)
+   Tr.insert(*F); }
+ iterator erase(iterator P)
+  {return (Tr.erase((Imp::iterator&)P)); }
+ iterator erase(iterator F, iterator L)
+  {return (Tr.erase((Imp::iterator&)F,
+   (Imp::iterator&)L)); }
+ size_type erase(const K& Kv)
+  {return (Tr.erase(Kv)); }
+ void clear()
+  {Tr.clear(); }
+ void swap(Myt& X)
+  {STD swap(Tr, X.Tr); }
+ friend void swap(Myt& X, Myt& Y)
+  {X.swap(Y); }
+ key_compare key_comp() const
+  {return (Tr.key_comp()); }
+ value_compare value_comp() const
+  {return (value_compare(Tr.key_comp())); }
+ iterator find(const K& Kv)
+  {return (Tr.find(Kv)); }
+ const_iterator find(const K& Kv) const
+  {return (Tr.find(Kv)); }
+ size_type count(const K& Kv) const
+  {return (Tr.count(Kv)); }
+ iterator lower_bound(const K& Kv)
+  {return (Tr.lower_bound(Kv)); }
+ const_iterator lower_bound(const K& Kv) const
+  {return (Tr.lower_bound(Kv)); }
+ iterator upper_bound(const K& Kv)
+  {return (Tr.upper_bound(Kv)); }
+ const_iterator upper_bound(const K& Kv) const
+  {return (Tr.upper_bound(Kv)); }
+ Pairii equal_range(const K& Kv)
+  {return (Tr.equal_range(Kv)); }
+ Paircc equal_range(const K& Kv) const
+  {return (Tr.equal_range(Kv)); }
+protected:
+ Imp Tr;
+ };
+  // map TEMPLATE OPERATORS
+template<class K, class Ty, class Pr, class A> inline
+ bool operator==(const map<K, Ty, Pr, A>& X,
+  const map<K, Ty, Pr, A>& Y)
+ {return (X.size() == Y.size()
+  && equal(X.begin(), X.end(), Y.begin())); }
+template<class K, class Ty, class Pr, class A> inline
+ bool operator!=(const map<K, Ty, Pr, A>& X,
+  const map<K, Ty, Pr, A>& Y)
+ {return (!(X == Y)); }
+template<class K, class Ty, class Pr, class A> inline
+ bool operator<(const map<K, Ty, Pr, A>& X,
+  const map<K, Ty, Pr, A>& Y)
+ {return (lexicographical_compare(X.begin(), X.end(),
+  Y.begin(), Y.end())); }
+template<class K, class Ty, class Pr, class A> inline
+ bool operator>(const map<K, Ty, Pr, A>& X,
+  const map<K, Ty, Pr, A>& Y)
+ {return (Y < X); }
+template<class K, class Ty, class Pr, class A> inline
+ bool operator<=(const map<K, Ty, Pr, A>& X,
+  const map<K, Ty, Pr, A>& Y)
+ {return (!(Y < X)); }
+template<class K, class Ty, class Pr, class A> inline
+ bool operator>=(const map<K, Ty, Pr, A>& X,
+  const map<K, Ty, Pr, A>& Y)
+ {return (!(X < Y)); }

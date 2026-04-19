@@ -1,0 +1,11 @@
+--------------- Listing 6: <memory>, part 7 -------------
+
+///};    // end of namespace std
+
+        // TEMPLATE OPERATOR new
+template<class T>
+    inline void *operator new(size_t n, _STD allocator<T>& al)
+///    {return (allocator<T>::rebind<char>::other(al)
+///        .allocate(n, 0)); }
+    {return (al.Charalloc(n)); }    ///
+#endif /* _MEMORY_ */

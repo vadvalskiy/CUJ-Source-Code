@@ -1,0 +1,36 @@
+// numeric standard header
+#ifndef _NUMERIC_
+#define _NUMERIC_
+///namespace std {
+template<class InIt, class T>
+    T accumulate(InIt first, InIt last, T val);
+template<class InIt, class T, class Binop>
+    T accumulate(InIt first, InIt last, T val, Binop binop);
+template<class InIt1, class InIt2, class T>
+    T inner_product(InIt1 first, InIt1 last, InIt2 x, T val);
+template<class InIt1, class InIt2, class T,
+    class Binop1, class Binop2>
+    T inner_product(InIt1 first, InIt1 last, InIt2 x, T val,
+        Binop1 binop1, Binop2 binop2);
+template<class InIt, class OutIt>
+    OutIt partial_sum(InIt first, InIt last, OutIt x);
+template<class InIt, class OutIt, class T>
+    OutIt _Partial_sum(InIt first, InIt last, OutIt x, T *);
+template<class InIt, class OutIt, class Binop>
+    OutIt partial_sum(InIt first, InIt last, OutIt x, Binop binop);
+template<class InIt, class OutIt, class Binop, class T>
+    OutIt _Partial_sum(InIt first, InIt last,
+        OutIt x, Binop binop, T *);
+template<class InIt, class OutIt>
+    OutIt adjacent_difference(InIt first, InIt last, OutIt x);
+template<class InIt, class OutIt, class T>
+    OutIt _Adjacent_difference(InIt first, InIt last,
+        OutIt x, T *);
+template<class InIt, class OutIt, class Binop>
+    OutIt adjacent_difference(InIt first, InIt last, OutIt x,
+        Binop binop);
+template<class InIt, class OutIt, class Binop, class T>
+    OutIt _Adjacent_difference(InIt first, InIt last, OutIt x,
+        Binop binop, T *);
+///};    // end of namespace std
+#endif /* _NUMERIC_ */

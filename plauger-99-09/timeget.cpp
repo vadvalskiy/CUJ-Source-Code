@@ -1,0 +1,37 @@
+template<class E, class InIt = istreambuf_iterator<E> >
+    class time_get : public locale::facet {
+public:
+    typedef E char_type;
+    typedef InIt iter_type;
+    explicit time_get(size_t refs = 0);
+    dateorder date_order() const;
+    iter_type get_time(iter_type first, iter_type last,
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    iter_type get_date(iter_type first, iter_type last,
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    iter_type get_weekday(iter_type first, iter_type last,
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    iter_type get_month(iter_type first, iter_type last,
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    iter_type get_year(iter_type first, iter_type last,
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    static locale::id id;
+protected:
+    ~time_get();
+    virtual dateorder do_date_order() const; 
+    virtual iter_type
+        do_get_time(iter_type first, iter_type last, 
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    virtual iter_type
+        do_get_date(iter_type first, iter_type last, 
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    virtual iter_type
+        do_get_weekday(iter_type first, iter_type last, 
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    virtual iter_type
+        do_get_month(iter_type first, iter_type last, 
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    virtual iter_type
+        do_get_year(iter_type first, iter_type last, 
+        ios_base& x, ios_base::iostate& st, tm *pt) const;
+    };

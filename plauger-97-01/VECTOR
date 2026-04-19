@@ -1,0 +1,246 @@
+[Caption: Template class vector]
+
+        // TEMPLATE CLASS vector
+///template<class T, class A = allocator<T> >
+template<class T, class A>    ///
+    class vector {
+public:
+    typedef vector<T, A> Mytype;
+    typedef A allocator_type;
+    typedef A::size_type size_type;
+    typedef A::difference_type difference_type;
+    typedef A::pointer Tptr;
+    typedef A::const_pointer Ctptr;
+    typedef A::reference reference;
+    typedef A::const_reference const_reference;
+    typedef A::value_type value_type;
+    typedef Tptr iterator;
+    typedef Ctptr const_iterator;
+    typedef reverse_iterator<const_iterator, value_type,
+        const_reference, Ctptr, difference_type>
+            const_reverse_iterator;
+    typedef reverse_iterator<iterator, value_type,
+        reference, Tptr, difference_type>
+            reverse_iterator;
+    explicit vector(const A& Al = A())
+        : allocator(Al), First(0), Last(0), End(0) {}
+    explicit vector(size_type N, const T& V = T(),
+        const A& Al = A())
+        : allocator(Al)
+        {First = allocator.allocate(N, (void *)0);
+        uninitialized_fill_n(First, N, V);
+        Last = First + N;
+        End = Last; }
+    vector(const Mytype& X)
+        : allocator(X.allocator)
+        {First = allocator.allocate(X.size(), (void *)0);
+        Last = uninitialized_copy(X.begin(), X.end(), First);
+        End = Last; }
+///    template<class Iter>
+    typedef const_iterator Iter;    ///
+    vector(It F, It L, const A& Al = A())
+        : allocator(Al), First(0), Last(0), End(0)
+        {insert(begin(), F, L); }
+    ~vector()
+        {Destroy(First, Last);
+        allocator.deallocate(First, End - First);
+        First = 0, Last = 0, End = 0; }
+    Mytype& operator=(const Mytype& X)
+        {if (this == &X)
+            ;
+        else if (X.size() <= size())
+            {iterator S = copy(X.begin(), X.end(), First);
+            Destroy(S, Last);
+            Last = First + X.size(); }
+        else if (X.size() <= capacity())
+            {const_iterator S = X.begin() + size();
+            copy(X.begin(), S, First);
+            uninitialized_copy(S, X.end(), Last);
+            Last = First + X.size(); }
+        else
+            {Destroy(First, Last);
+            allocator.deallocate(First, End - First);
+            First = allocator.allocate(X.size(), (void *)0);
+            Last = uninitialized_copy(X.begin(), X.end(),
+                First);
+            End = Last; }
+        return (*this); }
+    void reserve(size_type N)
+        {if (capacity() < N)
+            {iterator S = allocator.allocate(N, (void *)0);
+            uninitialized_copy(First, Last, S);
+            Destroy(First, Last);
+            allocator.deallocate(First, End - First);
+            End = S + N;
+            Last = S + size();
+            First = S; }}
+    size_type capacity() const
+        {return (First == 0 ? 0 : End - First); }
+    iterator begin()
+        {return (First); }
+    const_iterator begin() const
+        {return ((const_iterator)First); }
+    iterator end()
+        {return (Last); }
+    const_iterator end() const
+        {return ((const_iterator)Last); }
+    reverse_iterator rbegin()
+        {return (reverse_iterator(end())); }
+    const_reverse_iterator rbegin() const
+        {return (const_reverse_iterator(end())); }
+    reverse_iterator rend()
+        {return (reverse_iterator(begin())); }
+    const_reverse_iterator rend() const
+        {return (const_reverse_iterator(begin())); }
+    void resize(size_type N, T X = T())
+        {if (size() < N)
+            insert(end(), N - size(), X);
+        else if (N < size())
+            erase(begin() + N, end()); }
+    size_type size() const
+        {return (First == 0 ? 0 : Last - First); }
+    size_type max_size() const
+        {return (allocator.max_size()); }
+    bool empty() const
+        {return (size() == 0); }
+    A get_allocator() const
+        {return (allocator); }
+    const_reference at(size_type P) const
+        {if (size() <= P)
+            _Xran();
+        return (*(begin() + P)); }
+    reference at(size_type P)
+        {if (size() <= P)
+            _Xran();
+        return (*(begin() + P)); }
+    const_reference operator[](size_type P) const
+        {return (*(begin() + P)); }
+    reference operator[](size_type P)
+        {return (*(begin() + P)); }
+    reference front()
+        {return (*begin()); }
+    const_reference front() const
+        {return (*begin()); }
+    reference back()
+        {return (*(end() - 1)); }
+    const_reference back() const
+        {return (*(end() - 1)); }
+    void push_back(const T& X)
+        {insert(end(), X); }
+    void pop_back()
+        {erase(end() - 1); }
+///    template<class It>
+    void assign(It F, It L)
+        {erase(begin(), end());
+        insert(begin(), F, L); }
+///    template<class Pd, class T2>
+///        void assign(Pd N, const T2& X = T2())
+    void assign(size_type N, const T& X = T())    ///
+        {erase(begin(), end());
+        insert(begin(), N, X); }
+    iterator insert(iterator P, const T& X = T())
+        {size_type O = P - begin();
+        insert(P, 1, X);
+        return (begin() + O); }
+    void insert(iterator P, size_type M, const T& X)
+        {if (End - Last < M)
+            {size_type N = size() + (M < size() ? size() : M);
+            iterator S = allocator.allocate(N, (void *)0);
+            iterator Q = uninitialized_copy(First, P, S);
+            uninitialized_fill_n(_Q, M, X);
+            uninitialized_copy(P, Last, Q + M);
+            Destroy(First, Last);
+            allocator.deallocate(First, End - First);
+            End = S + N;
+            Last = S + size() + M;
+            First = S; }
+        else if (Last - P < M)
+            {uninitialized_copy(P, Last, P + M);
+            uninitialized_fill_n(Last, M - (Last - P), X);
+            fill(P, Last, X);
+            Last += M; }
+        else if (0 < M)
+            {uninitialized_copy(Last - M, Last, Last);
+            copy_backward(P, Last - M, Last);
+            fill(P, P + M, X);
+            Last += M; }}
+///    template<class It>
+///        void insert(iterator P, It F, It L)
+///        {insert(P, F, L, _Iter_cat(F)); }
+///    template<class It>
+///        void insert(iterator P, It F, It L,
+///            input_iterator_tag)
+///        {size_type O = P - begin();
+///        for (; F != L; ++F, ++O)
+///            insert(begin() + O, *F); }
+///    template<class It>
+///        void insert(iterator P, It F, It L,
+///            forward_iterator_tag)
+    void insert(iterator P, It F, It L)    ///
+        {size_type M = 0;
+        _Distance(F, L, M);
+        if (End - Last < M)
+            {size_type N = size() + (M < size() ? size() : M);
+            iterator S = allocator.allocate(N, (void *)0);
+            iterator Q = uninitialized_copy(First, P, S);
+            Q = uninitialized_copy(F, L, Q);
+            uninitialized_copy(P, Last, Q);
+            Destroy(First, Last);
+            allocator.deallocate(First, End - First);
+            End = S + N;
+            Last = S + size() + M;
+            First = S; }
+        else if (Last - P < M)
+            {uninitialized_copy(P, Last, P + M);
+            uninitialized_copy(F + (Last - P), L, Last);
+            copy(F, F + (Last - P), P);
+            Last += M; }
+        else if (0 < M)
+            {uninitialized_copy(Last - M, Last, Last);
+            copy_backward(P, Last - M, Last);
+            copy(F, L, P);
+            Last += M; }}
+    iterator erase(iterator P)
+        {copy(P + 1, end(), P);
+        Destroy(Last - 1, Last);
+        --Last;
+        return (P); }
+    iterator erase(iterator F, iterator L)
+        {iterator S = copy(L, end(), F);
+        Destroy(S, end());
+        Last = S;
+        return (F); }
+    void clear()
+        {erase(begin(), end()); }
+    bool operator==(const Mytype& X) const
+        {return (size() == X.size()
+            && equal(begin(), end(), X.begin())); }
+    bool operator!=(const Mytype& X) const
+        {return (!(*this == X)); }
+    bool operator<(const Mytype& X) const
+        {return (lexicographical_compare(begin(), end(),
+            X.begin(), X.end())); }
+    bool operator>(const Mytype& X) const
+        {return (X < *this); }
+    bool operator<=(const Mytype& X) const
+        {return (!(X < *this)); }
+    bool operator>=(const Mytype& X) const
+        {return (!(*this < X)); }
+    void swap(Mytype& X)
+        {if (allocator == X.allocator)
+            {STD swap(First, X.First);
+            STD swap(Last, X.Last);
+            STD swap(End, X.End); }
+        else
+            {Mytype _Ts = *this; *this = X, X = _Ts; }}
+    friend void swap(Mytype& X, Mytype& Y)
+        {X.swap(Y); }
+protected:
+    void Destroy(iterator F, iterator L)
+        {for (; F != L; ++F)
+            allocator.destroy(F); }
+    void _Xran() const
+        {throw out_of_range("invalid vector<T> subscript"); }
+    A allocator;
+    iterator First, Last, End;
+    };

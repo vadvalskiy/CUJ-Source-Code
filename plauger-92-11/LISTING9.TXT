@@ -1,0 +1,11 @@
+LOCALE DICT
+NOTE dictionary collation sequence
+collate[0, 0      ] '.'        $O $I $1
+collate[0, 1:$#   ]               $I $1
+collate[0, 'a':'z'] @@         $O $I $1
+collate[0, 'A':'Z'] $@+'a'-'A' $O $I $1
+collate[1, 0      ] $@         $O $I $1
+LOCALE end
+
+
+

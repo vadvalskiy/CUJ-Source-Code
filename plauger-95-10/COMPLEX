@@ -1,0 +1,170 @@
+------------- Listing 1: The Header <complex> ---------
+
+#define __STD_COMPLEX
+                // TEMPLATE CLASS complex
+template<class T>
+        class complex {
+public:
+        complex(T re = 0, T im = 0);
+        template<class U>
+                complex(const complex<U>& x);
+        T real() const;
+        T imag() const;
+        template<class U>
+                complex<T>& operator=(const complex<U>& rhs);
+        template<class U>
+                complex<T>& operator+=(const complex<U>& rhs);
+        template<class U>
+                complex<T>& operator-=(const complex<U>& rhs);
+        template<class U>
+                complex<T>& operator*=(const complex<U>& rhs);
+        template<class U>
+                complex<T>& operator/=(const complex<U>& rhs);
+        };
+                // CLASS complex<float>
+class complex<float> {
+public:
+        complex(float re = 0, float im = 0);
+        explicit complex(const complex<double>& rhs);
+        explicit complex(const complex<long double>& rhs);
+        template<class U>
+                complex<float>& operator=(const complex<U>& rhs);
+        template<class U>
+                complex<float>& operator+=(const complex<U>& rhs);
+        template<class U>
+                complex<float>& operator-=(const complex<U>& rhs);
+        template<class U>
+                complex<float>& operator*=(const complex<U>& rhs);
+        template<class U>
+                complex<float>& operator/=(const complex<U>& rhs);
+        };
+                // CLASS complex<double>
+class complex<double> {
+public:
+        complex(double re = 0, double im = 0);
+        complex(const complex<float>& rhs);
+        explicit complex(const complex<long double>& rhs);
+        template<class U>
+                complex<double>& operator=(const complex<U>& rhs);
+        template<class U>
+                complex<double>& operator+=(const complex<U>& rhs);
+        template<class U>
+                complex<double>& operator-=(const complex<U>& rhs);
+        template<class U>
+                complex<double>& operator*=(const complex<U>& rhs);
+        template<class U>
+                complex<double>& operator/=(const complex<U>& rhs);
+        };
+                // CLASS complex<long double>
+class complex<long double> {
+public:
+        complex(long double re = 0, long double im = 0);
+        complex(const complex<float>& rhs);
+        complex(const complex<double>& rhs);
+        template<class U>
+                complex<long double>& operator=(
+                        const complex<U>& rhs);
+        template<class U>
+                complex<long double>& operator+=(
+                        const complex<U>& rhs);
+        template<class U>
+                complex<long double>& operator-=(
+                        const complex<U>& rhs);
+        template<class U>
+                complex<long double>& operator*=(
+                        const complex<U>& rhs);
+        template<class U>
+                complex<long double>& operator/=(
+                        const complex<U>& rhs);
+        };
+                // TEMPLATE FUNCTIONS FOR complex
+template<class T>
+        complex<T> operator+(const complex<T>& lhs,
+                const complex<T>& rhs);
+template<class T>
+        complex<T> operator+(const complex<T>& lhs, T rhs);
+template<class T>
+        complex<T> operator+(T lhs, const complex<T>& rhs);
+template<class T>
+        complex<T> operator-(const complex<T>& lhs,
+                const complex<T>& rhs);
+template<class T>
+        complex<T> operator-(const complex<T>& lhs, T rhs);
+template<class T>
+        complex<T> operator-(T lhs, const complex<T>& rhs);
+template<class T>
+        complex<T> operator*(const complex<T>& lhs,
+                const complex<T>& rhs);
+template<class T>
+        complex<T> operator*(const complex<T>& lhs, T rhs);
+template<class T>
+        complex<T> operator*(T lhs, const complex<T>& rhs);
+template<class T>
+        complex<T> operator/(const complex<T>& lhs,
+                const complex<T>& rhs);
+template<class T>
+        complex<T> operator/(const complex<T>& lhs, T rhs);
+template<class T>
+        complex<T> operator/(T lhs, const complex<T>& rhs);
+template<class T>
+        complex<T> operator+(const complex<T>& lhs);
+template<class T>
+        complex<T> operator-(const complex<T>& lhs);
+template<class T>
+        bool operator==(const complex<T>& lhs,
+                const complex<T>& rhs);
+template<class T>
+        bool operator==(const complex<T>& lhs, T rhs);
+template<class T>
+        bool operator==(T lhs, const complex<T>& rhs);
+template<class T>
+        bool operator!=(const complex<T>& lhs,
+                const complex<T>& rhs);
+template<class T>
+        bool operator!=(const complex<T>& lhs, T rhs);
+template<class T>
+        bool operator!=(T lhs, const complex<T>& rhs);
+template<class T>
+        istream& operator>>(istream& is, complex<T>& x);
+template<class T>
+        ostream& operator<<(ostream& os, const complex<T>& x);
+template<class T>
+        T real(const complex<T>& x);
+template<class T>
+        T imag(const complex<T>& x);
+template<class T>
+        T abs(const complex<T>& x);
+template<class T>
+        T arg(const complex<T>& x);
+template<class T>
+        T norm(const complex<T>& x);
+template<class T>
+        complex<T> conjg(const complex<T>& x);
+template<class T>
+        complex<T> polar(T rho, T theta);
+template<class T>
+        complex<T> cos(const complex<T>& x);
+template<class T>
+        complex<T> cosh(const complex<T>& x);
+template<class T>
+        complex<T> exp(const complex<T>& x);
+template<class T>
+        complex<T> log(const complex<T>& x);
+template<class T>
+        complex<T> log10(const complex<T>& x);
+template<class T>
+        complex<T> pow(const complex<T>& x, int y);
+template<class T>
+        complex<T> pow(const complex<T>& x, T y);
+template<class T>
+        complex<T> pow(const complex<T>& x,
+                const complex<T>& y);
+template<class T>
+        complex<T> pow(T x, const complex<T>& y);
+template<class T>
+        complex<T> sin(const complex<T>& x);
+template<class T>
+        complex<T> sinh(const complex<T>& x);
+template<class T>
+        complex<T> sqrt(const complex<T>& x);
+

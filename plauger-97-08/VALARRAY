@@ -1,0 +1,143 @@
+[Caption: Listing 1 -- Template class <f>valarray<d> 
+
+		// MACROS
+#define VALOP(TYPE, LENGTH, RHS) \
+	valarray<TYPE> Ans(LENGTH); \
+	for (size_t I = 0; I < Ans.size(); ++I) \
+		Ans[I] = RHS; \
+	return (Ans)
+#define VALGOP(RHS) \
+	for (size_t I = 0; I < size(); ++I) \
+		Ptr[I] RHS; \
+	return (*this)
+#define VALGOP2(RHS) \
+	for (size_t I = 0; I < L.size(); ++I) \
+		L[I] RHS; \
+	return (L)
+
+		// TEMPLATE CLASS valarray
+template<class Ty>
+	class valarray {
+public:
+	typedef Ty value_type;
+	explicit valarray(size_t N = 0)
+		{Tidy(), Res = N, Grow(N); }
+	valarray(const Ty& X, size_t N)
+		{Tidy(), Grow(N, &X); }
+	valarray(const Ty *S, size_t N)
+		{Tidy(), Grow(N, S, 1); }
+	valarray(const valarray<Ty>& X)
+		{Tidy(), Grow(X.size(), X.Ptr, 1); }
+	valarray(const slice_array<Ty>& Sl)
+		{Tidy();
+		*this = Sl; }
+	valarray(const gslice_array<Ty>& Gs)
+		{Tidy();
+		*this = Gs; }
+	valarray(const mask_array<Ty>& Ma)
+		{Tidy();
+		*this = Ma; }
+	valarray(const indirect_array<Ty>& Ia)
+		{Tidy();
+		*this = Ia; }
+	~valarray()
+		{Tidy(true); }
+	valarray<Ty>& operator=(const valarray<Ty>& R)
+		{if (this == &R)
+			return (*this);
+		Grow(R.size(), 0, 0, true);
+		VALGOP(= R[I]); }
+	valarray<Ty>& operator=(const Ty& R)
+		{VALGOP(= R); }
+	void resize(size_t N)
+		{resize(N, Ty()); }
+	void resize(size_t N, const Ty C)
+		{Grow(N, &C, 0, true); }
+	valarray<Ty>& operator=(const slice_array<Ty>& Sl);
+	valarray<Ty>& operator=(const gslice_array<Ty>& Gs);
+	valarray<Ty>& operator=(const mask_array<Ty>& Ma);
+	valarray<Ty>& operator=(const indirect_array<Ty>& Ia);
+	size_t size() const
+		{return (Len); }
+	Ty operator[](size_t I) const
+		{return (Ptr[I]); } 
+	Ty& operator[](size_t I)
+		{return (Ptr[I]); }
+	valarray<Ty> operator[](slice Sl) const;
+	slice_array<Ty> operator[](slice Sl);
+	valarray<Ty> operator[](const gslice& Gs) const;
+	gslice_array<Ty> operator[](const gslice& Gs);
+	valarray<Ty> operator[](
+		const Boolarray& Ba) const;
+	mask_array<Ty> operator[](
+		const Boolarray& Ba);
+	valarray<Ty> operator[](const Sizarray& Ia) const;
+	indirect_array<Ty> operator[](const Sizarray& Ia);
+	Ty sum() const
+		{Ty Sum = Ptr[0];
+		for (size_t I = 0; ++I < size(); )
+			Sum += Ptr[I];
+		return (Sum); }
+	Ty min() const
+		{Ty Min = Ptr[0];
+		for (size_t I = 0; ++I < size(); )
+			if (Ptr[I] < Min)
+				Min = Ptr[I];
+		return (Min); }
+	Ty max() const
+		{Ty Max = Ptr[0];
+		for (size_t I = 0; ++I < size(); )
+			if (Max < Ptr[I])
+				Max = Ptr[I];
+		return (Max); }
+	valarray<Ty> shift(int N) const
+		{static Ty Def;
+		VALOP(Ty, size(),
+			0 < N && size() - I <= N
+				|| N < 0 && I  < -N
+					? Def : Ptr[I + N]); }
+	valarray<Ty> cshift(int N) const
+		{if (size() == 0)
+			;
+		else if (N < 0)
+			{if ((N += size()) < 0)
+				N = size() - (-N) % size(); }
+		else if (size() <= N)
+			N %= size();
+		VALOP(Ty, size(),
+			size() - I <= N
+				? Ptr[I - size() + N] : Ptr[I + N]); }
+	valarray<Ty> apply(Ty F(Ty)) const
+		{VALOP(Ty, size(), F(Ptr[I])); }
+	valarray<Ty> apply(Ty F(const Ty&)) const
+		{VALOP(Ty, size(), F(Ptr[I])); }
+private:
+	void Grow(size_t N, const Ty *S = 0, size_t D = 0,
+		bool Trim = 0)
+		{size_t Os = Ptr == 0 ? 0 : Res;
+		if (N == 0)
+			{if (Trim)
+				Tidy(true); }
+		else if (N == Os || N < Os && !Trim)
+			;
+		else
+			{size_t I, M = Ptr == 0 && N < Res ? Res : N;
+			Ty *Np = new Ty[M];
+			if (Np == 0)
+				Nomemory();
+			size_t Nm = N < Len ? N : Len;
+			for (I = 0; I < Nm; ++I)
+				Np[I] = Ptr[I];
+			if (S != 0)
+				for (; I < M; ++I, S += D)
+					Np[I] = *S;
+			Tidy(true), Ptr = Np, Res = M; }
+		Len = N; }
+	void Tidy(bool Constructed = 0)
+		{if (Constructed && Ptr != 0)
+			delete[] Ptr;
+		Len = 0, Ptr = 0, Res = 0; }
+	 Ty *Ptr;
+	size_t Len, Res;
+	};
+

@@ -1,0 +1,79 @@
+typedef T	float_t;
+typedef T	double_t;
+
+#define HUGE_VAL	val
+#define INFINITY	val
+#define NAN			val
+
+#define FP_NAN			0
+#define FP_INFINITE		1
+#define FP_NORMAL		2
+#define FP_SUBNORMAL	3
+#define FP_ZERO			4
+
+#define fpclassify(x)	expr
+#define signbit(x)		expr
+#define isfinite(x)		expr
+#define isnormal(x)		expr
+#define isnan(x)		expr
+
+#define DECIMAL_DIG	val
+
+T acos(T x);
+T asin(T x);
+T atan(T x);
+T atan2(T x, T y);
+T cos(T x);
+T sin(T x);
+T tan(T x);
+T acosh(T x);
+T asinh(T x);
+T atanh(T x);
+T cosh(T x);
+T sinh(T x);
+T tanh(T x);
+T exp(T x);
+T exp2(T x);
+T expm1(T x);
+T frexp(T x, int *pexp);
+T ldexp(T x, int exp);
+T log(T x);
+T log10(T x);
+T log1p(T x);
+T log2(T x);
+T logb(T x);
+float modff(float x, float *iptr);
+double modfd(double x, double *iptr);
+long double modfl(long double x, long double *iptr);
+T scalb(T x, long n);
+T fabs(T x);
+T hypot(T x, T y);
+T pow(T x, T y);
+T sqrt(T x);
+T erf(T x);
+T erfc(T x);
+T gamma(T x);
+T lgamma(T x);
+T ceil(T x);
+T floor(T x);
+T nearbyint(T x);
+T rint(T x);
+long rinttol(long double x);
+T round(T x);
+long roundtol(long double x);
+T trunc(T x);
+T fmod(T x, T y);
+T remainder(T x, T y);
+T remquo(T x, T y, int *quot);
+T copysign(T x, T y);
+float nanf(const char *tag);
+double nan(const char *tag);
+long double nanl(const char *tag);
+T nextafter(T x, long double y);
+float nextafterf(float x, float y);
+double nextafterd(double x, double y);
+long double nextafterl(long double x, long double y);
+T fdim(T x, T y);
+T fmax(T x, T y);
+T fmin(T x, T y);
+

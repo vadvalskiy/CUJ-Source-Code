@@ -1,0 +1,21 @@
+--------------- Listing 1: <memory>, part 2 -------------
+
+        // TEMPLATE FUNCTION uninitialized_copy
+template<class InIt, class FwdIt> inline
+    FwdIt uninitialized_copy(InIt first, InIt last, FwdIt x)
+    {for (; first != last; ++x, ++first)
+        _Construct(&*x, *first);
+    return (x); }
+
+        // TEMPLATE FUNCTION uninitialized_fill
+template<class FwdIt, class T> inline
+    void uninitialized_fill(FwdIt first, FwdIt last, const T& x)
+    {for (; first != last; ++first)
+        _Construct(&*first, x); }
+
+        // TEMPLATE FUNCTION uninitialized_fill_n
+template<class FwdIt, class Size, class T> inline
+    void uninitialized_fill_n(FwdIt first, Size n, const T& x)
+    {for (; 0 < n; --n, ++first)
+        _Construct(&*first, x); }
+

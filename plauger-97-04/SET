@@ -1,0 +1,136 @@
+[Caption: Listing 1 -- Template class <f>set<d>]
+
+
+  // TEMPLATE CLASS set
+template<class K, class Pr = less<K>,
+ class A = allocator<K> >
+ class set {
+public:
+ typedef set<K, Pr, A> Myt;
+ typedef K value_type;
+ struct Kfn : public unary_function<value_type, K> {
+  const K& operator()(const value_type& X) const
+  {return (X); }
+  };
+ typedef Pr value_compare;
+ typedef K key_type;
+ typedef Pr key_compare;
+ typedef A allocator_type;
+ typedef Tree<K, value_type, Kfn, Pr, A> Imp;
+ typedef typename Imp::size_type size_type;
+ typedef typename Imp::difference_type difference_type;
+ typedef typename Imp::const_reference reference;
+ typedef typename Imp::const_reference const_reference;
+ typedef typename Imp::const_iterator iterator;
+ typedef typename Imp::const_iterator const_iterator;
+ typedef typename Imp::const_reverse_iterator
+  reverse_iterator;
+ typedef typename Imp::const_reverse_iterator
+  const_reverse_iterator;
+ typedef pair<iterator, bool> Pairib;
+ typedef pair<const_iterator, const_iterator> Paircc;
+ explicit set()
+  : Tr(Pr(), false, A()) {}
+ explicit set(const Pr& Pred)
+  : Tr(Pred, false, A()) {}
+ explicit set(const Pr& Pred, const A& Al)
+  : Tr(Pred, false, Al) {}
+/// template<class It>
+ typedef const value_type *It; ///
+ set(It F, It L)
+  : Tr(Pr(), false, A())
+  {for (; F != L; ++F)
+   Tr.insert(*F); }
+/// template<class It>
+ set(It F, It L, const Pr& Pred)
+  : Tr(Pred, false, A())
+  {for (; F != L; ++F)
+   Tr.insert(*F); }
+/// template<class It>
+ set(It F, It L, const Pr& Pred,
+  const A& Al)
+  : Tr(Pred, false, Al)
+  {for (; F != L; ++F)
+   Tr.insert(*F); }
+ const_iterator begin() const
+  {return (Tr.begin()); }
+ const_iterator end() const
+  {return (Tr.end()); }
+ const_reverse_iterator rbegin() const
+  {return (Tr.rbegin()); }
+ const_reverse_iterator rend() const
+  {return (Tr.rend()); }
+ size_type size() const
+  {return (Tr.size()); }
+ size_type max_size() const
+  {return (Tr.max_size()); }
+ bool empty() const
+  {return (Tr.empty()); }
+ A get_allocator() const
+  {return (Tr.get_allocator()); }
+ Pairib insert(const value_type& X)
+  {Imp::Pairib Ans = Tr.insert(X);
+  return (Pairib(Ans.first, Ans.second)); }
+ iterator insert(iterator P, const value_type& X)
+  {return (Tr.insert((Imp::iterator&)P, X)); }
+/// template<class It>
+ void insert(It F, It L)
+  {for (; F != L; ++F)
+   Tr.insert(*F); }
+ iterator erase(iterator P)
+  {return (Tr.erase((Imp::iterator&)P)); }
+ iterator erase(iterator F, iterator L)
+  {return (Tr.erase((Imp::iterator&)F,
+   (Imp::iterator&)L)); }
+ size_type erase(const K& Kv)
+  {return (Tr.erase(Kv)); }
+ void clear()
+  {Tr.clear(); }
+ void swap(Myt& X)
+  {STD swap(Tr, X.Tr); }
+ friend void swap(Myt& X, Myt& Y)
+  {X.swap(Y); }
+ key_compare key_comp() const
+  {return (Tr.key_comp()); }
+ value_compare value_comp() const
+  {return (Tr.key_comp()); }
+ const_iterator find(const K& Kv) const
+  {return (Tr.find(Kv)); }
+ size_type count(const K& Kv) const
+  {return (Tr.count(Kv)); }
+ const_iterator lower_bound(const K& Kv) const
+  {return (Tr.lower_bound(Kv)); }
+ const_iterator upper_bound(const K& Kv) const
+  {return (Tr.upper_bound(Kv)); }
+ Paircc equal_range(const K& Kv) const
+  {return (Tr.equal_range(Kv)); }
+protected:
+ Imp Tr;
+ };
+  // set TEMPLATE OPERATORS
+template<class K, class Pr, class A> inline
+ bool operator==(const set<K, Pr, A>& X,
+  const set<K, Pr, A>& Y)
+ {return (X.size() == Y.size()
+  && equal(X.begin(), X.end(), Y.begin())); }
+template<class K, class Pr, class A> inline
+ bool operator!=(const set<K, Pr, A>& X,
+  const set<K, Pr, A>& Y)
+ {return (!(X == Y)); }
+template<class K, class Pr, class A> inline
+ bool operator<(const set<K, Pr, A>& X,
+  const set<K, Pr, A>& Y)
+ {return (lexicographical_compare(X.begin(), X.end(),
+  Y.begin(), Y.end())); }
+template<class K, class Pr, class A> inline
+ bool operator>(const set<K, Pr, A>& X,
+  const set<K, Pr, A>& Y)
+ {return (Y < X); }
+template<class K, class Pr, class A> inline
+ bool operator<=(const set<K, Pr, A>& X,
+  const set<K, Pr, A>& Y)
+ {return (!(Y < X)); }
+template<class K, class Pr, class A> inline
+ bool operator>=(const set<K, Pr, A>& X,
+  const set<K, Pr, A>& Y)
+ {return (!(X < Y)); }

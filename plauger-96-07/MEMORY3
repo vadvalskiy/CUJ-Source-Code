@@ -1,0 +1,18 @@
+--------------- Listing 2: <memory>, part 3 -------------
+
+        // TEMPLATE FUNCTION get_temporary_buffer
+template<class T> inline
+    pair<T _FARQ *, _PDFT>
+///        get_temporary_buffer(_PDFT n)
+        get_temporary_buffer(_PDFT n, T _FARQ *)    ///
+    {T _FARQ *p;
+    for (p = 0; 0 < n; n /= 2)
+        if ((p = (T _FARQ *)operator new(
+            (_SIZT)n * sizeof (T), nothrow)) != 0)
+            break;
+    return (pair<T _FARQ *, _PDFT>(p, n)); }
+
+        // TEMPLATE FUNCTION return_temporary_buffer
+template<class T> inline
+    void return_temporary_buffer(T _FARQ *p)
+    {operator delete(p); }

@@ -1,0 +1,96 @@
+-------------- Listing 5: The Header <f><numeric><d> ------------
+
+// numeric standard header
+#ifndef _NUMERIC_
+#define _NUMERIC_
+#include <iterator>
+///namespace std {
+
+        // TEMPLATE FUNCTION accumulate
+template<class InIt, class T> inline
+    T accumulate(InIt first, InIt last, T val)
+    {for (; first != last; ++first)
+        val = val + *first;
+    return (val); }
+
+        // TEMPLATE FUNCTION accumulate WITH BINOP
+template<class InIt, class T, class Binop> inline
+    T accumulate(InIt first, InIt last, T val, Binop binop)
+    {for (; first != last; ++first)
+        val = binop(val, *first);
+    return (val); }
+
+        // TEMPLATE FUNCTION inner_product
+template<class InIt1, class InIt2, class T> inline
+    T inner_product(InIt1 first, InIt1 last, InIt2 x, T val)
+    {for (; first != last; ++first, ++x)
+        val = val + *first * *x;
+    return (val); }
+
+        // TEMPLATE FUNCTION inner_product WITH BINOPS
+template<class InIt1, class InIt2, class T,
+    class Binop1, class Binop2> inline
+    T inner_product(InIt1 first, InIt1 last, InIt2 x, T val,
+        Binop1 binop1, Binop2 binop2)
+    {for (; first != last; ++first, ++x)
+        val = binop1(val, binop2(*first, *x));
+    return (val); }
+
+        // TEMPLATE FUNCTION partial_sum
+template<class InIt, class OutIt> inline
+    OutIt partial_sum(InIt first, InIt last, OutIt x)
+    {return (first == last ? x
+        : _Partial_sum(first, last, x, _Val_type(first))); }
+template<class InIt, class OutIt, class T> inline
+    OutIt _Partial_sum(InIt first, InIt last, OutIt x, T *)
+    {T val = *first;
+    for (*x = val; ++first != last; *++x = val)
+        val = val + *first;
+    return (++x); }
+
+        // TEMPLATE FUNCTION partial_sum WITH BINOP
+template<class InIt, class OutIt, class Binop> inline
+    OutIt partial_sum(InIt first, InIt last, OutIt x, Binop binop)
+    {return (first == last ? x : _Partial_sum(first, last,
+        x, binop, _Val_type(first))); }
+template<class InIt, class OutIt, class Binop, class T> inline
+    OutIt _Partial_sum(InIt first, InIt last,
+        OutIt x, Binop binop, T *)
+    {T val = *first;
+    for (*x = val; ++first != last; *++x = val)
+        val = binop(val, *first);
+    return (++x); }
+
+        // TEMPLATE FUNCTION adjacent_difference
+template<class InIt, class OutIt> inline
+    OutIt adjacent_difference(InIt first, InIt last, OutIt x)
+    {return (first == last ? x : _Adjacent_difference(first, last,
+        x, _Val_type(first))); }
+template<class InIt, class OutIt, class T> inline
+    OutIt _Adjacent_difference(InIt first, InIt last,
+        OutIt x, T *)
+    {T val = *first;
+    for (*x = val; ++first != last; )
+        {T tmp = *first;
+        *++x = tmp - val;
+        val = tmp; }
+    return (++x); }
+
+        // TEMPLATE FUNCTION adjacent_difference WITH BINOP
+template<class InIt, class OutIt, class Binop> inline
+    OutIt adjacent_difference(InIt first, InIt last, OutIt x,
+        Binop binop)
+    {return (first == last ? x : _Adjacent_difference(first, last,
+        x, binop, _Val_type(first))); }
+template<class InIt, class OutIt, class Binop, class T> inline
+    OutIt _Adjacent_difference(InIt first, InIt last, OutIt x,
+        Binop binop, T *)
+    {T val = *first;
+    for (*x = val; ++first != last; )
+        {T tmp = *first;
+        *++x = binop(tmp, val);
+        val = tmp; }
+    return (++x); }
+
+///};    // end of namespace std
+#endif /* _NUMERIC_ */

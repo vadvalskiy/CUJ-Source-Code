@@ -1,0 +1,47 @@
+  // TEMPLATE CLASS priority_queue
+template<class Ty, class C = vector<Ty>,
+ class Pr = less<C::value_type> >
+ class priority_queue {
+public:
+ typedef C container_type;
+ typedef typename C::value_type value_type;
+ typedef typename C::size_type size_type;
+ explicit priority_queue()
+  : c(), comp() {}
+ explicit priority_queue(const Pr& X)
+  : c(), comp(X) {}
+ explicit priority_queue(const Pr& X, const C& Cont)
+  : c(Cont), comp(X)
+  {make_heap(c.begin(), c.end(), comp); }
+ template<class It>
+  priority_queue(It F, _It L)
+  : c(F, L), comp()
+  {make_heap(c.begin(), c.end(), comp); }
+ template<class It>
+  priority_queue(It F, It L, const Pr& X)
+  : c(F, L), comp(X)
+  {make_heap(c.begin(), c.end(), comp); }
+ template<class It>
+  priority_queue(It F, It L, const Pr& X,
+   const C& Cont)
+  : c(Cont), comp(X)
+  {c.insert(c.end(), F, L);
+  make_heap(c.begin(), c.end(), comp); }
+ bool empty() const
+  {return (c.empty()); }
+ size_type size() const
+  {return (c.size()); }
+ value_type& top()
+  {return (c.front()); }
+ const value_type& top() const
+  {return (c.front()); }
+ void push(const value_type& X)
+  {c.push_back(X);
+  push_heap(c.begin(), c.end(), comp); }
+ void pop()
+  {pop_heap(c.begin(), c.end(), comp);
+  c.pop_back(); }
+protected:
+ C c;
+ Pr comp;
+ };
